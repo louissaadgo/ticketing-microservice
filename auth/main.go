@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -13,7 +12,10 @@ const address string = ":3000"
 
 //Sends the current user
 func getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hi there")
+	//These are equivalent to http.Error
+	// w.WriteHeader(http.StatusInternalServerError)
+	// w.Write([]byte("500 - Something bad happened!"))
+	http.Error(w, "Invalid email adress", http.StatusForbidden)
 }
 
 func main() {
