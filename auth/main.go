@@ -5,21 +5,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/louissaadgo/ticketing-microservice/auth/routes"
 )
 
 //Port 3000
 const address string = ":3000"
 
-//Sends the current user
-func getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	//These are equivalent to http.Error
-	// w.WriteHeader(http.StatusInternalServerError)
-	// w.Write([]byte("500 - Something bad happened!"))
-	http.Error(w, "Invalid email adress", http.StatusForbidden)
-}
-
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/api/users/currentuser", getCurrentUser).Methods("GET")
+	r.HandleFunc("/api/users/signup", routes.Signup).Methods("POST")
+	r.HandleFunc("/api/users/signin", routes.Signin).Methods("POST")
+	r.HandleFunc("/api/users/signout", routes.Signout).Methods("POST")
+	r.HandleFunc("/api/users/currentuser", routes.CurrentUser).Methods("GET")
 	log.Fatal(http.ListenAndServe(address, r))
 }
