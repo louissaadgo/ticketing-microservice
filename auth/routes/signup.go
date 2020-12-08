@@ -10,7 +10,7 @@ import (
 
 //Signup signs up the user to our app
 func Signup(w http.ResponseWriter, r *http.Request) {
-	credentials := user.Auth{}
+	credentials := user.Model{}
 	json.NewDecoder(r.Body).Decode(&credentials)
 	if len(credentials.Email) < 10 {
 		http.Error(w, "Email must be longer than 10 characters", http.StatusBadRequest)
