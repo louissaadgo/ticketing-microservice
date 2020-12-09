@@ -23,12 +23,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln("Failed decoding json: ", err)
 		return
 	}
-	//Checks if the email address is valid
+	//Checks if the email address is invalid
 	if isEmailInvalid(credentials.Email) {
 		http.Error(w, "Inavlid Email Address", http.StatusBadRequest)
 		return
 	}
-	//Checks if the password is valid
+	//Checks if the password is invalid
 	if invalid, errorMsg := isPasswordInvalid(credentials.Password); invalid {
 		http.Error(w, errorMsg, http.StatusBadRequest)
 		return
