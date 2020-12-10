@@ -11,4 +11,5 @@ import (
 func Signin(w http.ResponseWriter, r *http.Request) {
 	credentials := user.Model{}
 	json.NewDecoder(r.Body).Decode(&credentials)
+	//Check credentials
 }
