@@ -1,14 +1,33 @@
 package middlewares
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
-//Error sends an error
-func Error(w http.ResponseWriter, err string) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+//structure is the error structure
+type structure struct {
+	Message string `json:"message"`
+}
+
+//ErrorHandler sends an error
+func ErrorHandler(w http.ResponseWriter, message string) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusBadRequest)
-	fmt.Fprintln(w, err)
+	fmt.Fprint(w, toJSON(message))
+}
+
+//toJSON transforms the struct into json
+func toJSON(message string) string {
+	errorStructure := structure{
+		Message: message,
+	}
+	bs, err := json.Marshal(errorStructure)
+	if err != nil {
+		log.Fatalln("failed to marchal json")
+	}
+	return string(bs)
 }
