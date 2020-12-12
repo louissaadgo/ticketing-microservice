@@ -26,12 +26,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	//Checks if the email address is invalid
 	if isEmailInvalid(credentials.Email) {
-		middlewares.ErrorHandler(w, "Inavlid Email Address")
+		middlewares.ErrorHandler(w, "RequestValidationError", "Inavlid Email Address")
 		return
 	}
 	//Checks if the password is invalid
 	if invalid, errorMsg := isPasswordInvalid(credentials.Password); invalid {
-		middlewares.ErrorHandler(w, errorMsg)
+		middlewares.ErrorHandler(w, "RequestValidationError", errorMsg)
 		return
 	}
 	fmt.Fprintln(w, "Signed up successfully")

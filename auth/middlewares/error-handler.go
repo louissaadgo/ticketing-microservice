@@ -9,21 +9,23 @@ import (
 
 //structure is the error structure
 type structure struct {
-	Message string `json:"message"`
+	ErrorType string `json:"errorType"`
+	Message   string `json:"message"`
 }
 
 //ErrorHandler sends an error
-func ErrorHandler(w http.ResponseWriter, message string) {
+func ErrorHandler(w http.ResponseWriter, errorType string, message string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusBadRequest)
-	fmt.Fprint(w, toJSON(message))
+	fmt.Fprint(w, toJSON(errorType, message))
 }
 
 //toJSON transforms the struct into json
-func toJSON(message string) string {
+func toJSON(errorType string, message string) string {
 	errorStructure := structure{
-		Message: message,
+		ErrorType: errorType,
+		Message:   message,
 	}
 	bs, err := json.Marshal(errorStructure)
 	if err != nil {
