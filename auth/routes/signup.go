@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/louissaadgo/ticketing-microservice/auth/middlewares"
 	"github.com/louissaadgo/ticketing-microservice/auth/user"
 )
 
@@ -25,7 +26,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	//Checks if the email address is invalid
 	if isEmailInvalid(credentials.Email) {
-		http.Error(w, "Inavlid Email Address", http.StatusBadRequest)
+		middlewares.Error(w, "Inavlid Email Address")
 		return
 	}
 	//Checks if the password is invalid
