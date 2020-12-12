@@ -27,7 +27,7 @@ func toJSON(message string) string {
 	}
 	bs, err := json.Marshal(errorStructure)
 	if err != nil {
-		log.Fatalln("failed to marchal json")
+		log.Fatalln("Failed to marshal JSON")
 	}
 	return string(bs)
 }
