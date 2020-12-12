@@ -31,7 +31,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	//Checks if the password is invalid
 	if invalid, errorMsg := isPasswordInvalid(credentials.Password); invalid {
-		http.Error(w, errorMsg, http.StatusBadRequest)
+		middlewares.ErrorHandler(w, errorMsg)
 		return
 	}
 	fmt.Fprintln(w, "Signed up successfully")
