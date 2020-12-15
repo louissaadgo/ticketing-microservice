@@ -32,7 +32,7 @@ func ReqValErrorHandler(w http.ResponseWriter, reqVal errortype.RequestValidatio
 func DBConnErrorHandler(w http.ResponseWriter, DBConn errortype.DatabaseConnectionError, param string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusInternalServerError)
 	newError := errortype.Universal{}
 	newError.Errors = append(newError.Errors, errortype.ErrorModel{
 		Field:   param,
