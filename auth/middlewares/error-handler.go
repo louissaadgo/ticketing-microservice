@@ -10,14 +10,11 @@ import (
 )
 
 //ErrorHandler sends an error
-func ErrorHandler(w http.ResponseWriter, errors []errortype.ErrorModel, statusCode int) {
+func ErrorHandler(w http.ResponseWriter, errors errortype.Universal, statusCode int) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(statusCode)
-	newError := errortype.Universal{
-		Errors: errors,
-	}
-	bs, err := json.Marshal(newError)
+	bs, err := json.Marshal(errors)
 	if err != nil {
 		log.Fatalln("Failed to marshal JSON")
 	}
