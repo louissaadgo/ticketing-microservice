@@ -5,31 +5,30 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	errortype "github.com/louissaadgo/ticketing-microservice/auth/errorType"
 )
 
-//structure is the error structure
-type structure struct {
-	ErrorType string `json:"errorType"`
-	Message   string `json:"message"`
-}
-
-//ErrorHandler sends an error
-func ErrorHandler(w http.ResponseWriter, errorType string, message string) {
+//ReqValErrorHandler sends an error
+func ReqValErrorHandler(w http.ResponseWriter, reqVal errortype.RequestValidationError) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusBadRequest)
-	fmt.Fprint(w, toJSON(errorType, message))
-}
-
-//toJSON transforms the struct into json
-func toJSON(errorType string, message string) string {
-	errorStructure := structure{
-		ErrorType: errorType,
-		Message:   message,
-	}
-	bs, err := json.Marshal(errorStructure)
+	bs, err := json.Marshal(reqVal)
 	if err != nil {
 		log.Fatalln("Failed to marshal JSON")
 	}
-	return string(bs)
+	fmt.Fprint(w, string(bs))
+}
+
+//DBConnErrorHandler sends an error
+func DBConnErrorHandler(w http.ResponseWriter, DBConn errortype.DatabaseConnectionError) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusBadRequest)
+	bs, err := json.Marshal(DBConn)
+	if err != nil {
+		log.Fatalln("Failed to marshal JSON")
+	}
+	fmt.Fprint(w, string(bs))
 }
