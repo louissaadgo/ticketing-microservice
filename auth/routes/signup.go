@@ -30,7 +30,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		newError := errortype.RequestValidationError{
 			Errors: allErrors,
 		}
-		middlewares.ReqValErrorHandler(w, newError, "Email")
+		newErrors := []errortype.ErrorModel{}
+		for _, a := range newError.Errors {
+			newErrors = append(newErrors, errortype.ErrorModel{
+				Field:   "Email",
+				Message: a,
+			})
+		}
+		middlewares.ErrorHandler(w, newErrors, http.StatusBadRequest)
 		return
 	}
 	//Checks if the password is invalid
@@ -38,7 +45,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		newError := errortype.RequestValidationError{
 			Errors: allErrors,
 		}
-		middlewares.ReqValErrorHandler(w, newError, "Password")
+		newErrors := []errortype.ErrorModel{}
+		for _, a := range newError.Errors {
+			newErrors = append(newErrors, errortype.ErrorModel{
+				Field:   "Password",
+				Message: a,
+			})
+		}
+		middlewares.ErrorHandler(w, newErrors, http.StatusBadRequest)
 		return
 	}
 	fmt.Fprintln(w, "Signed up successfully")
