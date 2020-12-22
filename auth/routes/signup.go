@@ -55,7 +55,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		middlewares.ErrorHandler(w, newErrors, http.StatusBadRequest)
 		return
 	}
-	fmt.Fprintln(w, "Signed up successfully")
+	fmt.Fprintln(w, "SUCCESS SIGNUP")
 }
 
 //Checks if the email is invalid
