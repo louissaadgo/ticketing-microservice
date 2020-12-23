@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -13,12 +14,13 @@ import (
 	errortype "github.com/louissaadgo/ticketing-microservice/auth/errorType"
 	"github.com/louissaadgo/ticketing-microservice/auth/middlewares"
 	"github.com/louissaadgo/ticketing-microservice/auth/user"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 //Signup signs up the user to our app
-func Signup(w http.ResponseWriter, r *http.Request) {
+func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	credentials := user.Model{}
 	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
@@ -55,7 +57,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		middlewares.ErrorHandler(w, newErrors, http.StatusBadRequest)
 		return
 	}
-	fmt.Fprintln(w, "SUCCESS SIGNUP")
+	collection := client.Database("auth").Collection("users")
+	insertResult, err := collection.InsertOne(context.TODO(), credentials)
+	if err != nil {
+
+		log.Fatal(err)
+
+	}
+	fmt.Fprintln(w, "SUCCESS SIGNUP with id:", insertResult.InsertedID)
 }
 
 //Checks if the email is invalid
