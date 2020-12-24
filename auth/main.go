@@ -17,15 +17,16 @@ const address string = ":3000"
 
 //Client all
 var Client *mongo.Client
+var err error
 
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	newClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://auth-mongo-srv:27017/auth"))
-	Client = newClient
+	Client, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb://auth-mongo-srv:27017/auth"))
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer Client.Disconnect(ctx)
 	r := mux.NewRouter()
 	r.HandleFunc("/api/users/signup", signUp).Methods("POST")
 	r.HandleFunc("/api/users/signin", routes.Signin).Methods("POST")
