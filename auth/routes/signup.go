@@ -14,6 +14,7 @@ import (
 	errortype "github.com/louissaadgo/ticketing-microservice/auth/errorType"
 	"github.com/louissaadgo/ticketing-microservice/auth/middlewares"
 	"github.com/louissaadgo/ticketing-microservice/auth/user"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -58,11 +59,18 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		return
 	}
 	collection := client.Database("auth").Collection("users")
+	//Checks if the email is already in use
+	filter := bson.M{"email": credentials.Email}
+	var check bson.M
+	if err = collection.FindOne(context.TODO(), filter).Decode(&check); err == nil {
+		newError := errortype.ErrorModel{Field: "Email", Message: "Email Already in use"}
+		errorEmail := []errortype.ErrorModel{newError}
+		middlewares.ErrorHandler(w, errorEmail, http.StatusBadRequest)
+		return
+	}
 	insertResult, err := collection.InsertOne(context.TODO(), credentials)
 	if err != nil {
-
 		log.Fatal(err)
-
 	}
 	fmt.Fprintln(w, "SUCCESS SIGNUP with id:", insertResult.InsertedID)
 }
