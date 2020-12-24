@@ -28,13 +28,22 @@ func main() {
 	}
 	defer Client.Disconnect(ctx)
 	r := mux.NewRouter()
-	r.HandleFunc("/api/users/signup", signUp).Methods("POST")
-	r.HandleFunc("/api/users/signin", routes.Signin).Methods("POST")
-	r.HandleFunc("/api/users/signout", routes.Signout).Methods("POST")
-	r.HandleFunc("/api/users/currentuser", routes.CurrentUser).Methods("GET")
+	r.HandleFunc("/api/users/signup", signup).Methods("POST")
+	r.HandleFunc("/api/users/signin", signin).Methods("POST")
+	r.HandleFunc("/api/users/signout", signout).Methods("POST")
+	r.HandleFunc("/api/users/currentuser", currentUser).Methods("GET")
 	log.Fatal(http.ListenAndServe(address, r))
 }
 
-func signUp(w http.ResponseWriter, r *http.Request) {
+func signup(w http.ResponseWriter, r *http.Request) {
 	routes.Signup(w, r, Client)
+}
+func signin(w http.ResponseWriter, r *http.Request) {
+	routes.Signin(w, r, Client)
+}
+func signout(w http.ResponseWriter, r *http.Request) {
+	routes.Signout(w, r, Client)
+}
+func currentUser(w http.ResponseWriter, r *http.Request) {
+	routes.CurrentUser(w, r, Client)
 }
