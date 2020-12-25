@@ -2,6 +2,8 @@ package routes
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -68,11 +70,13 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		middlewares.ErrorHandler(w, errorEmail, http.StatusBadRequest)
 		return
 	}
+	hashedPassword := sha256.Sum256([]byte(credentials.Password))
+	credentials.Password = hex.EncodeToString(hashedPassword[:])
 	insertResult, err := collection.InsertOne(context.TODO(), credentials)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Fprintln(w, "SUCCESS SIGNUP with id:", insertResult.InsertedID)
+	fmt.Fprintln(w, "SUCCESS SIGNUP - ID: ", insertResult.InsertedID)
 }
 
 //Checks if the email is invalid
