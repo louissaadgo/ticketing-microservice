@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 
 	errortype "github.com/louissaadgo/ticketing-microservice/auth/errorType"
@@ -76,6 +77,13 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	cookie := http.Cookie{
+		Name:    "JWT",
+		Value:   "JWT",
+		Secure:  true,
+		Expires: time.Now().Add(15 * time.Minute),
+	}
+	http.SetCookie(w, &cookie)
 	fmt.Fprintln(w, "SUCCESS SIGNUP - ID: ", insertResult.InsertedID)
 }
 
