@@ -14,6 +14,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/dgrijalva/jwt-go"
 	errortype "github.com/louissaadgo/ticketing-microservice/auth/errorType"
 	"github.com/louissaadgo/ticketing-microservice/auth/middlewares"
 	"github.com/louissaadgo/ticketing-microservice/auth/user"
@@ -77,9 +78,15 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	token := jwt.New(jwt.SigningMethodRS512)
+	token.Claims = jwt.MapClaims{
+		"id":    credentials.ID,
+		"email": credentials.Email,
+	}
+	tokenString, err := token.SignedString("asdf")
 	cookie := http.Cookie{
 		Name:    "JWT",
-		Value:   "JWT",
+		Value:   tokenString,
 		Secure:  true,
 		Expires: time.Now().Add(15 * time.Minute),
 	}
