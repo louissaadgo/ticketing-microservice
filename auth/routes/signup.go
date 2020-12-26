@@ -70,7 +70,7 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		middlewares.ErrorHandler(w, errorEmail, http.StatusBadRequest)
 		return
 	}
-	hashedPassword := sha256.Sum256([]byte(credentials.Password))
+	hashedPassword := sha256.Sum256([]byte(credentials.Password + credentials.ID.Hex()))
 	credentials.Password = hex.EncodeToString(hashedPassword[:])
 	insertResult, err := collection.InsertOne(context.TODO(), credentials)
 	if err != nil {
