@@ -78,12 +78,22 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	token := jwt.New(jwt.SigningMethodRS512)
-	token.Claims = jwt.MapClaims{
-		"id":    credentials.ID,
-		"email": credentials.Email,
+	mySigningKey := []byte("asdf")
+	type MyCustomClaims struct {
+		ID    string `json:"id"`
+		Email string `json:"email"`
+		jwt.StandardClaims
 	}
-	tokenString, err := token.SignedString("asdf")
+	claims := MyCustomClaims{
+		credentials.ID.Hex(),
+		credentials.Email,
+		jwt.StandardClaims{
+			ExpiresAt: 15000,
+			Issuer:    "test",
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(mySigningKey)
 	cookie := http.Cookie{
 		Name:    "JWT",
 		Value:   tokenString,
