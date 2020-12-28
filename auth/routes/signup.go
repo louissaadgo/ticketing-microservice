@@ -65,7 +65,7 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	collection := client.Database("auth").Collection("users")
 	//Checks if the email is already in use
 	filter := bson.M{"email": credentials.Email}
-	var check bson.M
+	var check user.Model
 	if err = collection.FindOne(context.TODO(), filter).Decode(&check); err == nil {
 		newError := errortype.ErrorModel{Field: "Email", Message: "Email Already in use"}
 		errorEmail := []errortype.ErrorModel{newError}
@@ -74,7 +74,7 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	}
 	hashedPassword := sha256.Sum256([]byte(credentials.Password + credentials.ID.Hex()))
 	credentials.Password = hex.EncodeToString(hashedPassword[:])
-	insertResult, err := collection.InsertOne(context.TODO(), credentials)
+	_, err = collection.InsertOne(context.TODO(), credentials)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -84,9 +84,15 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		Email string `json:"email"`
 		jwt.StandardClaims
 	}
+	if err = collection.FindOne(context.TODO(), filter).Decode(&check); err != nil {
+		newError := errortype.ErrorModel{Field: "Unknown", Message: "Internal Server Error"}
+		errorEmail := []errortype.ErrorModel{newError}
+		middlewares.ErrorHandler(w, errorEmail, http.StatusBadRequest)
+		return
+	}
 	claims := MyCustomClaims{
-		credentials.ID.Hex(),
-		credentials.Email,
+		check.ID.Hex(),
+		check.Email,
 		jwt.StandardClaims{
 			ExpiresAt: 15000,
 			Issuer:    "test",
@@ -101,7 +107,7 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		Expires: time.Now().Add(15 * time.Minute),
 	}
 	http.SetCookie(w, &cookie)
-	fmt.Fprintln(w, "SUCCESS SIGNUP - ID: ", insertResult.InsertedID)
+	fmt.Fprintln(w, "SUCCESS SIGNUP - ID: ", check.ID.Hex())
 }
 
 //Checks if the email is invalid
