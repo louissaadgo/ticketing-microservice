@@ -1,1 +1,3 @@
 Redownload nginx when resetting cluster
+//to create a secret env-var
+kubectl create secret generic jwt-secret-key --from-literal=JWT_KEY=asdf
