@@ -109,7 +109,14 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 		Expires: time.Now().Add(15 * time.Minute),
 	}
 	http.SetCookie(w, &cookie)
-	fmt.Fprintln(w, "SUCCESS SIGNUP - ID: ", check.ID.Hex())
+	response := middlewares.Sign{
+		Email: check.Email,
+		ID:    check.ID.Hex(),
+	}
+	bs, _ := json.Marshal(response)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	fmt.Fprintln(w, string(bs))
 }
 
 //Checks if the email is invalid
