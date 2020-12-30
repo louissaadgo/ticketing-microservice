@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -78,7 +79,8 @@ func Signup(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	mySigningKey := []byte("asdf")
+	str := os.Getenv("JWT_KEY")
+	mySigningKey := []byte(str)
 	type MyCustomClaims struct {
 		ID    string `json:"id"`
 		Email string `json:"email"`
