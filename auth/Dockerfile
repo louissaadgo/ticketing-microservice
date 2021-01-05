@@ -1,4 +1,4 @@
-FROM golang:1.15.6-alpine AS build-env
+FROM golang:1.15.6-buster AS build-env
 WORKDIR /app
 COPY . .
 RUN go build -o goapp
